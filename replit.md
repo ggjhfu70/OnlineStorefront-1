@@ -1,102 +1,137 @@
-# E-commerce Application
+# Inventory Management System
 
 ## Overview
 
-This is a modern e-commerce web application built with React frontend and Express.js backend. The application features a product catalog with filtering, search, shopping cart functionality, and a responsive design using shadcn/ui components. The system is designed with a monorepo structure where frontend and backend share type definitions and schemas.
+This is a comprehensive inventory management system built with React, TypeScript, and Tailwind CSS. The application provides role-based access control with authentication, complete product and inventory management, order processing, customer management, and reporting capabilities. The system is designed with a modern frontend architecture that supports both backend API integration and mock data fallback for development and testing.
 
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React with TypeScript using Vite as the build tool
-- **UI Components**: shadcn/ui component library with Radix UI primitives
-- **Styling**: Tailwind CSS with custom CSS variables for theming
-- **State Management**: TanStack Query for server state management
-- **Routing**: Wouter for client-side routing
-- **Form Handling**: React Hook Form with Zod resolvers for validation
+- **Framework**: React 18 with TypeScript for type safety and modern development
+- **Styling**: Tailwind CSS with PostCSS for utility-first responsive design
+- **Routing**: React Router DOM for client-side navigation and protected routes
+- **Build Tool**: Vite for fast development server and optimized production builds
+- **State Management**: Custom React hooks with context-based authentication
+- **Internationalization**: i18next with Vietnamese and English language support
+- **Form Handling**: React Hook Form with validation resolvers
 
-### Backend Architecture
-- **Framework**: Express.js with TypeScript
-- **API Pattern**: RESTful API with conventional routes
-- **Data Validation**: Zod schemas for request/response validation
-- **Storage**: Pluggable storage interface with in-memory implementation
-- **Session Management**: Express session with PostgreSQL store support
-- **Error Handling**: Centralized error handling middleware
+### Authentication & Authorization
+- **Role-Based Access Control (RBAC)**: Five-tier role system (admin, manager, department_head, team_leader, employee)
+- **Permission System**: Action-based authorization with granular permissions
+- **Session Management**: Local storage with JWT token handling
+- **Protected Routes**: Component-level access control based on user roles and permissions
 
-### Data Storage
-- **Database**: PostgreSQL with Neon serverless driver
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Migrations**: Drizzle Kit for schema migrations
-- **Schema**: Shared schema definitions between frontend and backend
+### Service Layer Architecture
+- **Hybrid Service Pattern**: BaseHybridService class supporting both backend API and mock data
+- **Service Factory**: Centralized service management with dependency injection
+- **Fallback Strategy**: Automatic fallback to mock data when backend is unavailable
+- **Health Monitoring**: Backend health checks with connection status indicators
 
 ## Key Components
 
-### Product Management
-- Product catalog with categories (electronics, fashion, home, sports)
-- Product filtering by category, price range, and search terms
-- Product sorting by price, rating, and newest
-- Product detail views with image galleries
-- Rating and review system
+### 1. User Management System
+- **Normalized Database Schema**: Separate entities for users, roles, departments, and teams
+- **Many-to-Many Relationships**: Users can have multiple roles and belong to multiple teams
+- **Advanced Filtering**: Search and filter users by role, department, team, and status
+- **Bulk Operations**: Mass user operations with role and team assignments
 
-### Shopping Cart
-- Add/remove items from cart
-- Update item quantities
-- Persistent cart state
-- Real-time cart updates across components
+### 2. Product Management
+- **Dynamic Product Specifications**: Configurable product attributes based on category
+- **Variant Management**: Product variants with individual pricing and inventory
+- **Category Hierarchy**: Multi-level categorization with inheritance
+- **Inventory Integration**: Real-time stock tracking with low-stock alerts
 
-### User Interface
-- Responsive design optimized for mobile and desktop
-- Modern component library with consistent styling
-- Toast notifications for user feedback
-- Modal dialogs for product details
-- Side sheet for shopping cart
+### 3. Order Processing Workflow
+- **Multi-Status Pipeline**: Draft → Confirmed → Preparing → Shipped → Delivered
+- **Role-Based Actions**: Different roles can perform specific order transitions
+- **Customer Integration**: Automatic customer creation and lookup by phone number
+- **Promotion System**: Automatic discount application based on order value
 
-### API Structure
-- `GET /api/products` - List products with filtering
-- `GET /api/products/:id` - Get single product
-- `GET /api/cart` - Get cart items
-- `POST /api/cart` - Add item to cart
-- `PUT /api/cart/:id` - Update cart item
-- `DELETE /api/cart/:id` - Remove cart item
+### 4. Inventory Management
+- **Multi-Status Tracking**: Sellable, damaged, hold, and transit inventory states
+- **Stock Transfer System**: Movement between different inventory statuses
+- **Purchase Order Integration**: Automated inventory receipts from suppliers
+- **Alert System**: Low stock notifications and reorder suggestions
+
+### 5. Reporting & Analytics
+- **Role-Based Dashboards**: Different data visibility based on user permissions
+- **Real-Time Statistics**: Live updates of sales, inventory, and order metrics
+- **Chart Visualization**: Recharts integration for sales trends and analytics
+- **Export Capabilities**: Data export functionality for reports
 
 ## Data Flow
 
-1. **Product Browsing**: Client fetches products from API with optional filters
-2. **Product Selection**: User clicks product to view details in modal
-3. **Cart Operations**: Add to cart triggers API call and updates local state
-4. **State Synchronization**: TanStack Query manages cache invalidation and refetching
+### Authentication Flow
+1. User submits login credentials
+2. AuthService validates against backend/mock data
+3. JWT token stored in localStorage
+4. User context updated with role and permissions
+5. Navigation filtered based on user permissions
+
+### Order Creation Flow
+1. Salesperson searches for customer by phone number
+2. System auto-creates customer if not found
+3. Products added to order with real-time stock validation
+4. Automatic promotion calculation and application
+5. Order saved in draft status
+6. Manager confirmation required for order processing
+
+### Inventory Update Flow
+1. Purchase orders trigger inventory receipts
+2. Stock levels updated across all variants
+3. Low stock alerts generated automatically
+4. Audit trail maintained for all inventory changes
+5. Real-time dashboard updates reflect new stock levels
 
 ## External Dependencies
 
-### Core Dependencies
-- **@neondatabase/serverless**: PostgreSQL serverless driver
-- **drizzle-orm**: Type-safe ORM for database operations
-- **@tanstack/react-query**: Server state management
-- **@radix-ui/***: Unstyled, accessible UI primitives
-- **tailwindcss**: Utility-first CSS framework
-- **zod**: TypeScript-first schema validation
+### Core Libraries
+- **React & React DOM**: Frontend framework and virtual DOM
+- **TypeScript**: Type safety and development tooling
+- **Tailwind CSS**: Utility-first styling framework
+- **React Router DOM**: Client-side routing
+- **React Hook Form**: Form state management and validation
+
+### Data & State Management
+- **@tanstack/react-query**: Server state management and caching
+- **i18next**: Internationalization and localization
+- **date-fns**: Date manipulation and formatting
+
+### UI & Visualization
+- **Lucide React**: Icon library for consistent iconography
+- **Recharts**: Chart and data visualization
+- **@hookform/resolvers**: Form validation integration
+
+### Backend Integration
+- **Drizzle ORM**: Type-safe database queries and schema management
+- **@neondatabase/serverless**: Serverless PostgreSQL integration
+- **Express & Express Session**: Backend API and session management
+- **Passport**: Authentication middleware
 
 ### Development Tools
-- **vite**: Fast build tool and dev server
-- **tsx**: TypeScript execution for Node.js
-- **drizzle-kit**: Database migrations and introspection
-- **@replit/vite-plugin-***: Replit-specific development enhancements
+- **Vite**: Build tool and development server
+- **ESLint**: Code linting and style enforcement
+- **Autoprefixer**: CSS vendor prefix automation
 
 ## Deployment Strategy
 
-### Development
-- Vite dev server for frontend with HMR
-- tsx for running TypeScript backend with auto-reload
-- Shared type definitions prevent API/UI mismatches
+### Development Environment
+- **Vite Dev Server**: Hot module replacement for rapid development
+- **Mock Data Fallback**: Development without backend dependency
+- **TypeScript Checking**: Real-time type validation
+- **ESLint Integration**: Code quality enforcement
 
-### Production Build
-- Frontend: Vite builds optimized static assets
-- Backend: esbuild bundles server code with external dependencies
-- Single deployment artifact with static file serving
+### Production Deployment
+- **Static Build**: Optimized bundle with code splitting
+- **Environment Variables**: Configuration via VITE_ prefixed variables
+- **Backend API Integration**: Production API endpoint configuration
+- **CDN Ready**: Optimized assets for content delivery networks
 
-### Environment Configuration
-- Database URL configured via environment variables
-- Development vs production mode detection
-- Replit-specific plugins conditionally loaded
+### Configuration Management
+- **Environment-Based Config**: Different settings for dev/staging/production
+- **Service Mode Switching**: Runtime backend/mock mode selection
+- **Health Check Integration**: Automatic service status monitoring
+- **Graceful Degradation**: Fallback to cached data when services unavailable
 
 ## Changelog
 
